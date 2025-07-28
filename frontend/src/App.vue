@@ -2,6 +2,36 @@
 import { ref } from 'vue'
 import BookList from './components/BookList.vue'
 import BookModal from './components/BookModal.vue'
+
+const showModal = ref(false)
+const selectedBook = ref(null)
+const isEdit = ref(false)
+const bookListRef = ref(null)
+
+function closeModal() {
+  console.log('closeModal called');
+  showModal.value = false;
+}
+
+function handleSaved() {
+  // 書籍一覧の再取得
+  if (bookListRef.value) {
+    bookListRef.value.fetchBooks()
+  }
+  showModal.value = false
+}
+
+function addBook() {
+  selectedBook.value = null
+  isEdit.value = false
+  showModal.value = true
+}
+
+function editBook(book) {
+  selectedBook.value = book
+  isEdit.value = true
+  showModal.value = true
+}
 </script>
 
 <template>
@@ -19,7 +49,7 @@ import BookModal from './components/BookModal.vue'
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <BookList />
+      <BookList ref="bookListRef" @add="addBook" @edit="editBook" />
     </main>
 
     <BookModal
