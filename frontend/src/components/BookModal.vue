@@ -10,6 +10,7 @@
             v-model="form.title"
             type="text"
             required
+            name="title"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
@@ -19,6 +20,7 @@
           <input
             v-model="form.author"
             type="text"
+            name="author"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
@@ -28,6 +30,7 @@
           <input
             v-model="form.publisher"
             type="text"
+            name="publisher"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
@@ -37,6 +40,7 @@
           <input
             v-model="form.isbn"
             type="text"
+            name="isbn"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
@@ -91,6 +95,28 @@ watch(() => props.book, (newBook) => {
   }
 }, { immediate: true })
 
+// モーダルが開くたびにフォームを初期化
+watch([
+  () => props.show,
+  () => props.book,
+  () => props.isEdit
+], ([isShow, book, isEdit]) => {
+  if (isShow) {
+    if (book && isEdit) {
+      // 編集モードの場合、既存データを設定
+      form.value = { ...book }
+    } else {
+      // 新規追加モードの場合、フォームをリセット
+      form.value = {
+        title: '',
+        author: '',
+        publisher: '',
+        isbn: ''
+      }
+    }
+  }
+}, { immediate: true })
+
 // フォームの送信処理
 const handleSubmit = async () => {
   try {
@@ -99,10 +125,11 @@ const handleSubmit = async () => {
     } else {
       await axios.post('/api/books', form.value)
     }
-    emit('saved')
-    emit('close')
+    emit('saved') // 保存成功時のみ
+    emit('close') // モーダルを閉じる
   } catch (error) {
     console.error('書籍の保存に失敗しました:', error)
+    // エラー時は閉じない
   }
 }
 </script> 
