@@ -8,6 +8,7 @@
         type="text"
         v-model="searchQuery"
         placeholder="書籍を検索..."
+        name="search"
         class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
@@ -38,7 +39,7 @@
 
     <!-- 新規追加ボタン -->
     <button
-      @click="showAddModal = true"
+      @click="$emit('add')"
       class="fixed bottom-8 right-8 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600"
     >
       <span class="text-2xl">+</span>
@@ -50,6 +51,9 @@
 import { ref, computed } from 'vue'
 import axios from 'axios'
 
+// emitの定義
+const emit = defineEmits(['add', 'edit'])
+
 // axiosのデフォルト設定
 axios.defaults.baseURL = 'http://localhost:3001'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
@@ -57,7 +61,6 @@ axios.defaults.headers.common['Content-Type'] = 'application/json'
 // 状態管理
 const books = ref([])
 const searchQuery = ref('')
-const showAddModal = ref(false)
 
 // 検索機能
 const filteredBooks = computed(() => {
@@ -83,8 +86,7 @@ const fetchBooks = async () => {
 
 // 書籍の編集
 const editBook = (book) => {
-  // TODO: 編集モーダルの実装
-  console.log('編集:', book)
+  emit('edit', book)
 }
 
 // 書籍の削除
