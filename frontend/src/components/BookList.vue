@@ -103,4 +103,9 @@ const deleteBook = async (id) => {
 
 // 初期データの取得
 fetchBooks()
+
+// 外部から参照可能にする
+defineExpose({
+  fetchBooks
+})
 </script> 
