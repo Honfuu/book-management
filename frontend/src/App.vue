@@ -14,10 +14,20 @@ function closeModal() {
 }
 
 function handleSaved() {
+  console.log('handleSaved called, bookListRef:', bookListRef.value)
+  
   // 書籍一覧の再取得
-  if (bookListRef.value) {
-    bookListRef.value.fetchBooks()
+  if (bookListRef.value && typeof bookListRef.value.fetchBooks === 'function') {
+    try {
+      bookListRef.value.fetchBooks()
+      console.log('書籍一覧の更新が完了しました')
+    } catch (error) {
+      console.error('書籍一覧の更新に失敗しました:', error)
+    }
+  } else {
+    console.warn('bookListRefまたはfetchBooks関数が見つかりません')
   }
+  
   showModal.value = false
 }
 
